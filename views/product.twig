@@ -1,0 +1,18 @@
+{% extends 'layoute.twig' %}
+
+{% block body %}
+<h1>Produit : Panadol</h1>
+<form action="/product" method="post">
+    <label for="slide">Ajotuez un slide à a présentartion :</label><br>
+    <input type="text" name="title" value="title"/><br>
+    <input type="text" name="content" value="content"    class="form-control input-lg" /><br>
+
+    <input type="submit" value="save"/>
+</form>
+
+{% for slide in slides %}
+   <h3>Slide {{loop.index}} : {{ slide.title }} : {{ slide.content }}</h3><br>
+
+
+{% endfor %}
+{% endblock %}

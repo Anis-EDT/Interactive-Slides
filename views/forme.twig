@@ -1,0 +1,17 @@
+{% extends 'layoute.twig' %}
+      {% block style %}
+      {% endblock %}
+      {% block BreadCumbs %} {% endblock %}
+      	  {% block body %}{% endblock %}
+<h1> Produit : panadol</h1>
+<form action="/create" method="post">
+	<label for="slide"> Ajoutez un slide à la présentation </label>
+	<input type="text" name="slide" />
+	<input type="submit" value="save"/>
+</form>
+{% for slide in slides %}
+	<h3>titre du slide :{{slide.title}} </h3>
+	<h3>contenu du slide : {{slide.content}}</h3>
+{% endfor %}
+
+
