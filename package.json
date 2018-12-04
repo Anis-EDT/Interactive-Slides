@@ -1,9 +1,9 @@
 {
-  "name": "myapp",
+  "name": "pharma-crm-nodejs",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodemon ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
@@ -16,8 +16,5 @@
     "serve-favicon": "~2.4.5",
     "twig": "^1.10.5",
     "validator": "^9.4.1"
-  },
-  "devDependencies": {
-    "eslint": "^4.18.1"
   }
 }

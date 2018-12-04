@@ -1,0 +1,154 @@
+{% extends '../layout.twig' %}
+
+{% block ContenuPage %}
+    <h1>{{title}}</h1>
+    <div class="contenue">
+<div class="form1" >
+
+    <br>
+    <form action="/stat/rentabilite" method="get">
+        <table>
+            <tr><td>Choisir le mois:</td></tr><br>
+            <tr>
+
+                <td><input type="month" name="month"></td>
+                <td><input type="Submit" value="Envoyer" class="btn btn-primary"></td>
+            </tr>
+        </table>
+    </form>
+    <br><br>
+    {% if rents|length >0 %}
+    <table border="4" class="table">
+        <tr>
+             <td><b>Nom Deligué</b> </td>
+        {% for v in rents %}
+                <td><b>{{ v.nomdeligue }}</b></td>
+        {% endfor %}
+            <td><b>Totale</b></td>
+        </tr>
+        <tr>
+            <td>Charges </td>
+            {% for v in rents %}
+                <td>{{ v.charge }}</td>
+            {% endfor %}
+            <td>{{ charges }}</td>
+        </tr>
+        <tr>
+            <td>CA: </td>
+            {% for v in rents %}
+                <td>{{ v.ca }}</td>
+            {% endfor %}
+            <td>{{ ca }}</td>
+        </tr>
+        <tr>
+            <td>CA - Charges</td>
+            {% for v in rents %}
+                <td>{{ v.ca - v.charge }}</td>
+            {% endfor %}
+            <td>{{  ca - charges }}</td>
+        </tr>
+
+    </table>
+    {% endif %}
+
+</div>
+<div id="stackedbars">
+        <h2>Graphe</h2>
+<div width="600" height="350"><canvas id="bar-chart" width="600" height="350"></canvas></div>
+</div>
+    </div>
+    <div class="predictionform">
+        <form action="/stat/rentabilite/prediction" method="post">
+            <table>
+                <tr><h4>Prédiction Selon les: <span id="demo"></span> dernier mois:</h4></tr>
+                <tr><input type="range" min="2" max="12" value="2" class="slider" id="myRange" name="range"><br></tr>
+                <tr><input type="Submit" value="Envoyer" class="btn btn-primary"></tr>
+            </table>
+        </form>
+    </div>
+{% endblock %}
+
+
+
+
+
+ {% block pagescipts %}
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+
+     <script>
+          // Return with commas in between
+  var numberWithCommas = function(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+var dataPack2 = [{% for v in rents %} {{ v.ca - v.charge }} {% if not loop.last %},{% endif %}{% endfor %},{{  ca - charges }}];
+var dataPack1 = [{% for v in rents %} {{ v.charge }} {% if not loop.last %},{% endif %}{% endfor %},{{  charges }}];
+var dates = [ {% for v in rents %} "{{ v.nomdeligue }}" {% if not loop.last %},{% endif %}{% endfor %},"Total"];
+
+// Chart.defaults.global.elements.rectangle.backgroundColor = '#FF0000';
+
+var bar_ctx = document.getElementById('bar-chart');
+var bar_chart = new Chart(bar_ctx, {
+    type: 'bar',
+    data: {
+        labels: dates,
+        datasets: [
+        {
+            label: 'Charges',
+            data: dataPack1,
+						backgroundColor: "rgba(55, 160, 225, 0.7)",
+						hoverBackgroundColor: "rgba(55, 160, 225, 0.7)",
+						hoverBorderWidth: 2,
+						hoverBorderColor: 'lightgrey'
+        },
+        {
+            label: 'CA',
+            data: dataPack2,
+						backgroundColor: "rgba(225, 58, 55, 0.7)",
+						hoverBackgroundColor: "rgba(225, 58, 55, 0.7)",
+						hoverBorderWidth: 2,
+						hoverBorderColor: 'lightgrey'
+        },
+        ]
+    },
+    options: {
+        responsive: true,
+          maintainAspectRatio: false,
+     		animation: {
+        	duration: 10,
+        },
+        tooltips: {
+					mode: 'label',
+          callbacks: {
+          label: function(tooltipItem, data) {
+          	return data.datasets[tooltipItem.datasetIndex].label + ": " + numberWithCommas(tooltipItem.yLabel);
+          }
+          }
+         },
+        scales: {
+          xAxes: [{
+          	stacked: true,
+            gridLines: { display: false },
+            }],
+          yAxes: [{
+          	stacked: true,
+            ticks: {
+        			callback: function(value) { return numberWithCommas(value); },
+     				},
+            }],
+        }, // scales
+        legend: {display: true}
+    } // options
+   }
+);
+     </script>
+     <script>
+         var slider = document.getElementById("myRange");
+         var output = document.getElementById("demo");
+         output.innerHTML = slider.value;
+
+         slider.oninput = function() {
+             output.innerHTML = this.value;
+         }
+     </script>
+ {% endblock %}

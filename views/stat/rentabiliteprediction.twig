@@ -1,0 +1,109 @@
+{% extends '../layout.twig' %}
+
+{% block ContenuPage %}
+<h1>{{title}}</h1>
+    <div class="canvases">
+        <div>
+            <h2>Charges</h2>
+            <table border="1" class="table">
+
+    <tr>
+        <td>Charges</td>
+    {% for c in charges %}
+       <td> {{ c }}</td>
+        {% endfor %}
+    </tr>
+    <tr>
+        <td>Mois</td>
+    {% for m in months %}
+
+       <td {% if loop.index> (loop.length - 3) %} style="background-color: yellow" {% endif %}> {{ m }}</td>
+
+    {% endfor %}
+    </tr>
+    </table>
+            <br>
+            <h3>Graphe: </h3>
+            <div id="wrapper" style="position: relative; height: 50vh">
+            <canvas id="lineChart" height="400" width="1000 "></canvas>
+            </div>
+
+        </div>
+        <br> <br>
+        <div>
+            <h2>CA</h2>
+
+            <table border="1" class="table">
+                <tr>
+                    <td>C.A</td>
+                    {% for w in ca %}
+                        <td> {{ w }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Mois</td>
+                    {% for m in months %}
+
+                        <td {% if loop.index> (loop.length - 3) %} style="background-color: yellow" {% endif %}> {{ m }}</td>
+
+                    {% endfor %}
+                </tr>
+            </table>
+            <br>
+            <h3>Graphe: </h3>
+            <canvas id="lineChart2" height="400" width="1000"></canvas>
+
+        </div>
+    </div>
+    <br>
+
+
+
+{% endblock %}
+
+{% block pagescipts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+
+    <script language="JavaScript">
+
+            var data = {
+                labels: [{% for d in months %} "{{ d }}" {% if not loop.last %},{% endif %}{% endfor %}],
+                datasets: [
+                    {
+                        label: "Charges chart",
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: [{% for c in charges %} {{ c }} {% if not loop.last %},{% endif %}{% endfor %}]
+                    }
+                ]
+            };
+
+            var ctx = document.getElementById("lineChart").getContext("2d");
+            var options = {/* responsive : true,maintainAspectRatio : false*/ };
+            var lineChart = new Chart(ctx).Line(data, options);
+
+            var data2 = {
+                labels: [{% for d in months %} "{{ d }}" {% if not loop.last %},{% endif %}{% endfor %}],
+                datasets: [
+                    {
+                        label: "Prime and Fibonacci",
+                        fillColor: "rgba(220,220,220,0.2)",
+                        strokeColor: "rgba(220,220,220,1)",
+                        pointColor: "rgba(220,220,220,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(220,220,220,1)",
+                        data: [{% for a in ca %} {{ a }} {% if not loop.last %},{% endif %}{% endfor %}]
+                    }
+                ]
+            };
+
+            var ctx2 = document.getElementById("lineChart2").getContext("2d");
+            var options2 = { };
+            var lineChart2 = new Chart(ctx2).Line(data2, options2);
+    </script>
+{% endblock %}

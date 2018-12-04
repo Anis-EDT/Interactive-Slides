@@ -1,0 +1,42 @@
+{% extends '../layout.twig' %}
+
+{% block ContenuPage %}
+    <h1>{{title}}</h1>
+    <form action="" method="post">
+        <table>
+            <tr>
+                <td>Date:</td>
+                <td><input type="month" name="date"><br></td>
+            </tr>
+            <tr>
+                <td> Nom deligué:</td>
+                <td>
+                    <select name="nomdeligue">
+                        <option value="Ikbel">Ikbel</option>
+                        <option value="Assil">Assil</option>
+                        <option value="Salim">Salim</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td> Charge:</td>
+                <td> <input type="number" name="charge"></td>
+            </tr>
+            <tr>
+                <td> Chiffre d'affair:</td>
+                <td> <input type="number" name="ca"></td>
+            </tr>
+
+
+            <tr>
+                <td></td>
+                <td><input type="Submit" value="Envoyer"></td>
+            </tr>
+        </table>
+
+
+
+
+    </form>
+
+{% endblock %}

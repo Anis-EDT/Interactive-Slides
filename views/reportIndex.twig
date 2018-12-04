@@ -1,0 +1,137 @@
+{% extends 'layout.twig' %}
+
+{% block titrepage %}
+    CRM - Rapports
+{% endblock %}
+{% block rapportActive %}
+    class="active"
+{% endblock %}
+
+
+{% block csspage %}
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+        * element that contains the map. */
+        #map {
+            height: 50%;
+            display: none;
+        }
+    </style>
+{% endblock %}
+{% block BreadCumbs %}
+    <li>
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <a href="#">Home</a>
+    </li>
+    <li class="active">Rapports</li>
+{% endblock %}
+
+{% block ContenuPage %}
+    <div id="map"></div>
+    <div class="page-header">
+        <h1 class="green">
+            Soumettre un Rapport
+        </h1>
+    </div>
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-3 control-label no-padding-right" for="marque"> Pharmacie </label>
+            <div class="col-sm-9">
+                <select class="col-xs-10 col-sm-5 " id="pharmacie" required>
+                    <option disabled selected value="">Selectionner...</option>
+                    {% for client in clients %}
+                            <option value="{{ client.position.lat }},{{ client.position.lng }}">{{ client.address }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group" style="text-align: center;">
+            <button class="btn btn-success" onclick="TestPosition(event)">Demander Rapport</button>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block pagescipts %}
+
+    <script>
+        // Note: This example requires that you consent to location sharing when
+        // prompted by your browser. If you see the error "The Geolocation service
+        // failed.", it means you probably did not give permission for the browser to
+        // locate you.
+        function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+            var R = 6371; // Radius of the earth in km
+            var dLat = deg2rad(lat2-lat1);  // deg2rad below
+            var dLon = deg2rad(lon2-lon1);
+            var a =
+                    Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2)
+                ;
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            var d = R * c; // Distance in km
+            return d.toFixed(2);
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI/180)
+        }
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: -34.397, lng: 150.644},
+                zoom: 6
+            });
+            var infoWindow = new google.maps.InfoWindow({map: map});
+
+            // Try HTML5 geolocation.
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    infoWindow.setPosition(pos);
+                    infoWindow.setContent('Location found.');
+                    map.setCenter(pos);
+                }, function() {
+                    handleLocationError(true, infoWindow, map.getCenter());
+                });
+            } else {
+                // Browser doesn't support Geolocation
+                handleLocationError(false, infoWindow, map.getCenter());
+            }
+        }
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation ?
+                'Error: The Geolocation service failed.' :
+                'Error: Your browser doesn\'t support geolocation.');
+        }
+        function TestPosition(e){
+            e.preventDefault();
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                var latplace=parseFloat($('#pharmacie option:selected').val().split(',')[0]);
+                var lngplace=parseFloat($('#pharmacie option:selected').val().split(',')[1]);
+                var distance= getDistanceFromLatLonInKm(pos.lat,pos.lng,latplace,lngplace);
+                console.log(distance);
+                if (distance >= 3){
+                    $(".modal-body").html("<h1 class='text-danger'>Vous n'etes pas en place</h1>");
+
+                }else{
+                    $(".modal-body").html("<h1 class='text-success'>Vous Pouver Proceder</h1>");
+                }
+                $(".modal").modal("show");
+            }, function() {
+                handleLocationError(true, infoWindow, map.getCenter());
+            });
+        }
+    </script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCm3OUdBqWASzi7rbzukTnBfDG7OMpBK_0&callback=initMap">
+    </script>
+{% endblock %}
